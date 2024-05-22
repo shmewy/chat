@@ -1,21 +1,22 @@
-// src/App.js
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { auth, firestore } from './firebase';
+import firebase from 'firebase/app';
+import Login from './Login';
+import Chat from './Chat';
 import './App.css';
-import NavBar from './components/NavBar';
-import Chatbox from './components/Chatbox';
-import Welcome from './components/Welcome';
-import { auth } from './firebase';
 
 function App() {
-  const user = auth.currentUser;
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      setUser(user);
+    });
+  }, []);
 
   return (
     <div className="App">
-      <header className="App-header">
-        <NavBar auth={auth} />
-        {user ? <Chatbox firestore={firestore} /> : <Welcome />}
-      </header>
+      {user ? <Chat user={user} /> : <Login />}
     </div>
   );
 }
